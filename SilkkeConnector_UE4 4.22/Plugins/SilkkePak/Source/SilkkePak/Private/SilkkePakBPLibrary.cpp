@@ -1,28 +1,20 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
-#include "PakFileHandler.h"
+#include "SilkkePakBPLibrary.h"
+#include "SilkkePak.h"
 
-UPakFileHandler* UPakFileHandler::MakeDownloader()
+USilkkePakBPLibrary::USilkkePakBPLibrary(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	return NewObject<UPakFileHandler>();
+
 }
 
-USkeletalMesh* UPakFileHandler::SetSkeletalMeshSkeleton(USkeletalMesh* skeletalMesh, USkeleton* skeleton)
+USilkkePakBPLibrary* USilkkePakBPLibrary::MakeDownloader()
 {
-	skeletalMesh->Skeleton = skeleton;
-	return skeletalMesh;
+	return NewObject<USilkkePakBPLibrary>();
 }
 
-bool UPakFileHandler::IsEditor()
-{
-#if WITH_EDITOR
-	return true;
-#else
-	return false;
-#endif
-}
-
-UPakFileHandler* UPakFileHandler::DownloadFile(const FString& Url, FString SavePath)
+USilkkePakBPLibrary* USilkkePakBPLibrary::DownloadFile(const FString& Url, FString SavePath)
 {
 	FileUrl = Url;
 	FileSavePath = SavePath;
@@ -30,8 +22,8 @@ UPakFileHandler* UPakFileHandler::DownloadFile(const FString& Url, FString SaveP
 	TSharedRef<IHttpRequest> HttpRequest = FHttpModule::Get().CreateRequest();
 	HttpRequest->SetVerb("GET");
 	HttpRequest->SetURL(Url);
-	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UPakFileHandler::OnReady);
-	HttpRequest->OnRequestProgress().BindUObject(this, &UPakFileHandler::OnProgress_Internal);
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &USilkkePakBPLibrary::OnReady);
+	HttpRequest->OnRequestProgress().BindUObject(this, &USilkkePakBPLibrary::OnProgress_Internal);
 
 	// Execute the request
 	HttpRequest->ProcessRequest();
@@ -40,20 +32,7 @@ UPakFileHandler* UPakFileHandler::DownloadFile(const FString& Url, FString SaveP
 	return this;
 }
 
-void UPakFileHandler::CheckPakExist(const FString& Url)
-{
-	FileUrl = Url;
-	TSharedRef<IHttpRequest> HttpRequest = FHttpModule::Get().CreateRequest();
-	HttpRequest->SetVerb("GET");
-	HttpRequest->SetURL(Url);
-	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UPakFileHandler::OnReadyCheckFileExist);
-
-	// Execute the request
-	HttpRequest->ProcessRequest();
-	AddToRoot();
-}
-
-void UPakFileHandler::OnReadyCheckFileExist(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+void USilkkePakBPLibrary::OnReadyCheckFileExist(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
 	RemoveFromRoot();
 	Request->OnProcessRequestComplete().Unbind();
@@ -69,7 +48,7 @@ void UPakFileHandler::OnReadyCheckFileExist(FHttpRequestPtr Request, FHttpRespon
 	}
 }
 
-void UPakFileHandler::OnReady(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+void USilkkePakBPLibrary::OnReady(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
 	RemoveFromRoot();
 	Request->OnProcessRequestComplete().Unbind();
@@ -118,7 +97,7 @@ void UPakFileHandler::OnReady(FHttpRequestPtr Request, FHttpResponsePtr Response
 	}
 }
 
-void UPakFileHandler::OnProgress_Internal(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived)
+void USilkkePakBPLibrary::OnProgress_Internal(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived)
 {
 	FHttpResponsePtr HttpResponse = Request->GetResponse();
 
@@ -129,7 +108,22 @@ void UPakFileHandler::OnProgress_Internal(FHttpRequestPtr Request, int32 BytesSe
 	}
 }
 
-TArray<FString> UPakFileHandler::GetAllPakFiles(const FString& Directory, const FString& FileExtension)
+USkeletalMesh* USilkkePakBPLibrary::SetSkeletalMeshSkeleton(USkeletalMesh* skeletalMesh, USkeleton* skeleton)
+{
+	skeletalMesh->Skeleton = skeleton;
+	return skeletalMesh;
+}
+
+bool USilkkePakBPLibrary::IsEditor()
+{
+#if WITH_EDITOR
+	return true;
+#else
+	return false;
+#endif
+}
+
+TArray<FString> USilkkePakBPLibrary::GetAllPakFiles(const FString& Directory, const FString& FileExtension)
 {
 	TArray<FString> FoundedFiles;
 
@@ -143,7 +137,7 @@ TArray<FString> UPakFileHandler::GetAllPakFiles(const FString& Directory, const 
 	return FoundedFiles;
 }
 
-void UPakFileHandler::GetAvatarFilesInFolder(const FString& Directory, const FString& avatarID, USkeletalMesh* &skeletalMesh, UTexture2D* &texture2D)
+void USilkkePakBPLibrary::GetAvatarFilesInFolder(const FString& Directory, const FString& avatarID, USkeletalMesh* &skeletalMesh, UTexture2D* &texture2D)
 {
 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
 	IAssetRegistry& assetRegistry = AssetRegistryModule.Get();
@@ -171,7 +165,7 @@ void UPakFileHandler::GetAvatarFilesInFolder(const FString& Directory, const FSt
 	}
 }
 
-void UPakFileHandler::DeleteFilesInFolder(const FString& Directory)
+void USilkkePakBPLibrary::DeleteFilesInFolder(const FString& Directory)
 {
 	TArray<FString> FoundedFiles;
 
@@ -209,12 +203,12 @@ void UPakFileHandler::DeleteFilesInFolder(const FString& Directory)
 	}
 }
 
-FString UPakFileHandler::GetAbsoluteProjectPath()
+FString USilkkePakBPLibrary::GetAbsoluteProjectPath()
 {
 	return FPaths::ConvertRelativePathToFull(FPaths::ProjectDir());
 }
 
-void UPakFileHandler::MountPakAndStartAssetLoading(const FString& avatarID, const FString & PakFolder, const FString& PakName, const FString& MountPoint, TArray<UObject*> &Classes)
+void USilkkePakBPLibrary::MountPakAndStartAssetLoading(const FString& avatarID, const FString & PakFolder, const FString& PakName, const FString& MountPoint, TArray<UObject*> &Classes)
 {
 	TArray<UObject*> loadedObj;
 
@@ -263,7 +257,7 @@ void UPakFileHandler::MountPakAndStartAssetLoading(const FString& avatarID, cons
 		if (PakFile.IsValid())
 		{
 			FString InMountPoint = MountPoint;
-			
+
 #if WITH_EDITOR
 			FString RelativePath = FPaths::ProjectContentDir() + MountPoint;
 			InMountPoint = IFileManager::Get().ConvertToAbsolutePathForExternalAppForRead(*RelativePath);
@@ -326,3 +320,5 @@ void UPakFileHandler::MountPakAndStartAssetLoading(const FString& avatarID, cons
 		}
 	}
 }
+
+
