@@ -1,4 +1,4 @@
-# silkkeConnect - Unreal Engine 4
+# silkkeConnect - Unreal Engine 4 [BETA]
 
 #### silkke-connect 
 [EN] This package is the connector between silkke API and UE4 application. It's used to get avatars from users account and to use them in UE4.
