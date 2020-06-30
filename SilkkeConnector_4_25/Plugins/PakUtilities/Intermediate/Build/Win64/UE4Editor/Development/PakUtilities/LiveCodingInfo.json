@@ -1,0 +1,13 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.PakUtilities.cpp.obj": [
+			"PakUtilities.cpp.obj",
+			"PakUtilitiesBPLibrary.cpp.obj"
+		],
+		"Module.PakUtilities.gen.cpp.obj": [
+			"PakUtilities.init.gen.cpp.obj",
+			"PakUtilitiesBPLibrary.gen.cpp.obj"
+		]
+	}
+}

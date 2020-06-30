@@ -1,0 +1,14 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-PakUtilities.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\Workspace\Silkke\UE4\Plugin_Utilities\Plugin_Generator_4_5\Intermediate\Build\Win64\Plugin_Generator_4_5Editor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"D:\Workspace\Silkke\UE4\Plugin_Utilities\Plugin_Generator_4_5\Plugins\PakUtilities\Intermediate\Build\Win64\UE4Editor\Development\PakUtilities\Module.PakUtilities.cpp.obj"
+"D:\Workspace\Silkke\UE4\Plugin_Utilities\Plugin_Generator_4_5\Plugins\PakUtilities\Intermediate\Build\Win64\UE4Editor\Development\PakUtilities\Module.PakUtilities.gen.cpp.obj"
+"D:\Workspace\Silkke\UE4\Plugin_Utilities\Plugin_Generator_4_5\Plugins\PakUtilities\Intermediate\Build\Win64\UE4Editor\Development\PakUtilities\Default.rc2.res"
+/OUT:"D:\Workspace\Silkke\UE4\Plugin_Utilities\Plugin_Generator_4_5\Plugins\PakUtilities\Intermediate\Build\Win64\UE4Editor\Development\PakUtilities\UE4Editor-PakUtilities.lib"
+/INCLUDE:IMPLEMENT_MODULE_PakUtilities
